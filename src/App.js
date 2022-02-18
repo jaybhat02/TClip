@@ -1,23 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import SearchComp from "./SearchComp";
+import Clips from "./Clips";
+import TopHeader from "./TopHeader";
+import Sorter from "./Sorter";
+
+import { Container} from "semantic-ui-react";
+import "./App.css";
 
 function App() {
+  const [ClipInfo, setClipInfo] = useState("");
+  const [ResetSort, setResetSort] = useState(new Date().toISOString());
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div >
+    <Container >
+      
+      <TopHeader />
+      <SearchComp setClipInfo={setClipInfo} setResetSort={setResetSort} />
+      <Sorter ClipInfo={ClipInfo} setClipInfo={setClipInfo} ResetSort={ResetSort}/>
+      <Clips ClipInfo={ClipInfo} />
+      
+    </Container>
     </div>
   );
 }

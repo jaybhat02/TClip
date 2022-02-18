@@ -1,0 +1,3 @@
+FLASK_APP=api
+CLIENT_ID=iks5zekmi9nl1enkboczdg9pgjmk3s
+CLIENT_SECRET=dvgtinzrwgq2xhhxwog526lp0288vz
