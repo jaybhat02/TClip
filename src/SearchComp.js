@@ -5,12 +5,10 @@ import twitchPoint from "./twitch.png";
 import { resolve } from "bluebird";
 const request = require("request");
 
-
-
 export default function SearchComp({ setClipInfo, setResetSort }) {
   const [Streamer, setStreamer] = useState("");
   var ClipInfo = useState("");
-  
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const absMin = new Date(2016, 6, 26);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -27,8 +25,8 @@ export default function SearchComp({ setClipInfo, setResetSort }) {
   const [LoaderAct, setLoaderAct] = useState(false);
   const setToday = false;
 
-  const client_id =`${process.env.REACT_APP_CLIENT_ID}`;
-  const client_secret =`${process.env.REACT_APP_CLIENT_SECRET}`;
+  const client_id = process.env.REACT_APP_CLIENT_ID;
+  const client_secret = process.env.REACT_APP_CLIENT_SECRET;
   const NumClip = "100";
   var accessToken = "";
   var id = "";
@@ -48,16 +46,16 @@ export default function SearchComp({ setClipInfo, setResetSort }) {
         <List.Item>
           <Image
             size="mini"
-            src={twitchPoint}          />
+            src={twitchPoint} />
           <List.Content>
-            Optional: You can select a minimum date, maximum date or a range of
+            You can select a minimum date, maximum date or a range of
             dates to query the clips you wish to download
           </List.Content>
         </List.Item>
         <List.Item>
           <Image
             size="mini"
-            src={twitchPoint}          />
+            src={twitchPoint} />
           <List.Content>
             Sort the clips how ever you like to find what you are looking for
           </List.Content>
@@ -148,13 +146,13 @@ export default function SearchComp({ setClipInfo, setResetSort }) {
           if (err) {
             reject(console.log(err));
           }
-          if(JSON.parse(body).data[0] === undefined){
+          if (JSON.parse(body).data[0] === undefined) {
             resolve('');
           } else {
             var id = JSON.parse(body).data[0].id;
             resolve(id);
           }
-          
+
         });
       }
     });
@@ -162,27 +160,27 @@ export default function SearchComp({ setClipInfo, setResetSort }) {
 
   function getClips(accessToken, id) {
     var clipInfo = [];
-    if(id === ''){
+    if (id === '') {
       resolve(clipInfo)
-    } else{
+    } else {
       return new Promise((resolve, reject) => {
         var cursor = '';
-        
+
         getClipBatch(accessToken, id, cursor).then((response) => {
           cursor = response.cur;
-          for(const i in response.ClipInfo){
+          for (const i in response.ClipInfo) {
             clipInfo.push(response.ClipInfo[i]);
           }
         }).then(() => {
           getClipBatch(accessToken, id, cursor).then((response) => {
             cursor = response.cur;
-            for(const i in response.ClipInfo){
+            for (const i in response.ClipInfo) {
               clipInfo.push(response.ClipInfo[i]);
             }
           }).then(() => {
             getClipBatch(accessToken, id, cursor).then((response) => {
               cursor = response.cur;
-              for(const i in response.ClipInfo){
+              for (const i in response.ClipInfo) {
                 clipInfo.push(response.ClipInfo[i]);
               }
               resolve(clipInfo)
@@ -190,9 +188,9 @@ export default function SearchComp({ setClipInfo, setResetSort }) {
           })
         })
       })
-        
+
     }
-      
+
   }
 
   function getClipBatch(accessToken, id, in_cursor) {
@@ -206,7 +204,7 @@ export default function SearchComp({ setClipInfo, setResetSort }) {
             "https://api.twitch.tv/helix/clips?broadcaster_id=" +
             id +
             "&first=" +
-            NumClip + '&started_at=' + MinDate.toISOString() +'&ended_at=' + MaxDate.toISOString(),
+            NumClip + '&started_at=' + MinDate.toISOString() + '&ended_at=' + MaxDate.toISOString(),
           method: "GET",
           headers: {
             "Client-ID": client_id,
@@ -215,15 +213,17 @@ export default function SearchComp({ setClipInfo, setResetSort }) {
         };
 
       } else if (cursor === undefined) {
-        resolve({'cur': undefined,
-                'ClipInfo': []});
+        resolve({
+          'cur': undefined,
+          'ClipInfo': []
+        });
       } else {
         clipReq = {
           url:
             "https://api.twitch.tv/helix/clips?broadcaster_id=" +
             id +
             "&first=" +
-            NumClip + '&started_at=' + MinDate.toISOString() +'&ended_at=' + MaxDate.toISOString() +
+            NumClip + '&started_at=' + MinDate.toISOString() + '&ended_at=' + MaxDate.toISOString() +
             "&after=" +
             cursor,
           method: "GET",
@@ -241,7 +241,7 @@ export default function SearchComp({ setClipInfo, setResetSort }) {
         var clip_info = JSON.parse(body);
         cursor = clip_info.pagination.cursor;
         var options = { year: 'numeric', month: 'short', day: 'numeric' };
-        
+
         for (const i in clip_info.data) {
           var x = clip_info.data[i];
           var date = new Date(x.created_at).toLocaleDateString("en-US", options)
@@ -256,8 +256,10 @@ export default function SearchComp({ setClipInfo, setResetSort }) {
           };
           ClipInfo.push(relevent_info);
         }
-        resolve({'cur': cursor,
-                'ClipInfo': ClipInfo});
+        resolve({
+          'cur': cursor,
+          'ClipInfo': ClipInfo
+        });
       });
     });
   }
@@ -274,38 +276,38 @@ export default function SearchComp({ setClipInfo, setResetSort }) {
       alert("Please Enter Streamer Name");
       setLoaderAct(false)
     } else {
-  getToken()
-    .then((response) => {
-      accessToken = response;
-      return getId(response);
-    })
-    .then((response) => {
-      id = response;
-      return(getClips(accessToken, id));
-    }).then((response) => {
-      var dict = {"clipInfo": response}
-      ClipInfo = dict;
-      if (
-        typeof ClipInfo === "undefined" ||
-        ClipInfo["clipInfo"] === undefined ||
-        ClipInfo["clipInfo"].length === 0
-      ) {
-        alert("No Clips Found");
-      } else {
-        setInst("");
-        setResetSort(new Date().toISOString());
+      getToken()
+        .then((response) => {
+          accessToken = response;
+          return getId(response);
+        })
+        .then((response) => {
+          id = response;
+          return (getClips(accessToken, id));
+        }).then((response) => {
+          var dict = { "clipInfo": response }
+          ClipInfo = dict;
+          if (
+            typeof ClipInfo === "undefined" ||
+            ClipInfo["clipInfo"] === undefined ||
+            ClipInfo["clipInfo"].length === 0
+          ) {
+            alert("No Clips Found");
+          } else {
+            setInst("");
+            setResetSort(new Date().toISOString());
 
-        setClipInfo(ClipInfo);
-      }
-      setLoaderAct(false)
-    })
+            setClipInfo(ClipInfo);
+          }
+          setLoaderAct(false)
+        })
     }
   }
 
   return (
     <div>
       <Form style={{ textAlign: "center", marginTop: 10 }}>
-        
+
         <Input
           value={Streamer}
           onChange={(e) => setStreamer(e.target.value)}
@@ -344,7 +346,7 @@ export default function SearchComp({ setClipInfo, setResetSort }) {
           label="To:"
         />
       </Form>
-      <Loader size='medium' inverted inline='centered' active={LoaderAct}/>
+      <Loader size='medium' inverted inline='centered' active={LoaderAct} />
       <div>{inst}</div>
     </div>
   );

@@ -3,11 +3,10 @@ import { Container, Button, Header, Image } from "semantic-ui-react";
 import "./App.css";
 
 export default function Clips({ ClipInfo }) {
- 
+
   var StreamerInfo;
   var listItems;
-  if (typeof ClipInfo["clipInfo"] === "undefined") {
-  } else if (ClipInfo["clipInfo"].length === 0) {
+  if (!ClipInfo || !ClipInfo["clipInfo"] || ClipInfo["clipInfo"].length === 0) {
   } else {
     StreamerInfo = ClipInfo["clipInfo"];
     listItems = StreamerInfo.map((d) => {
@@ -43,10 +42,10 @@ export default function Clips({ ClipInfo }) {
   }
   // Render it
   return (
-      <Container style={{ marginTop: 30, textAlign: 'center' }}>
-        <div id="container" className="ui three column grid">
-          {listItems}
-        </div>
-      </Container>
+    <Container style={{ marginTop: 30, textAlign: 'center' }}>
+      <div id="container" className="ui three column grid">
+        {listItems}
+      </div>
+    </Container>
   );
 }
